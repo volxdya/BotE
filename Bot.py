@@ -28,13 +28,3 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print("Exit")
 
-
-
-'''
-curl.exe -X POST "https://api.telegram.org/bot8508011364:AAGxseSRIQiHr8xaBN3DfFhsUpqIaNrX3Jg/sendMessage" ` -d "chat_id=882885310" ` -d "text=Привет это я Эпштейн. Посмотри все категории и найди все пасхалки, чтобы получить шанс на поездку на мой остров"
-curl.exe -X POST "https://api.telegram.org/bot8508011364:AAGxseSRIQiHr8xaBN3DfFhsUpqIaNrX3Jg/sendMessage" ` -d "chat_id=7790399263" ` -d "text=Вы зачислены в список гостей на остров Эпштейна. Все подробности у @UserVadik"
-curl.exe -X POST "https://api.telegram.org/bot8508011364:AAGxseSRIQiHr8xaBN3DfFhsUpqIaNrX3Jg/sendMessage" ` -d "chat_id=1005396335" ` -d "text=Try sending the keys (words)"
-curl.exe -X POST "https://api.telegram.org/bot8508011364:AAGxseSRIQiHr8xaBN3DfFhsUpqIaNrX3Jg/sendMessage" ` -d "chat_id=8127753414" ` -d "text=/port"
-curl.exe -X POST "https://api.telegram.org/bot8508011364:AAGxseSRIQiHr8xaBN3DfFhsUpqIaNrX3Jg/sendMessage" ` -d "chat_id=-1002101964028" ` -d "text=А он вас не хочет"
-curl.exe -X POST "https://api.telegram.org/bot8508011364:AAGxseSRIQiHr8xaBN3DfFhsUpqIaNrX3Jg/sendMessage" ` -d "chat_id=-1002730278858" ` -d "text=Бот успешно запущен"
-'''

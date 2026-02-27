@@ -5,10 +5,11 @@ from dotenv import load_dotenv
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 import os
+from aiogram.client.session.aiohttp import AiohttpSession
 
 router_admin = Router()
 load_dotenv()
-bot = Bot(os.getenv('BOT_TOCKEN'))
+bot = Bot(os.getenv('BOT_TOCKEN'), session = AiohttpSession(proxy="http://proxy.server:3128"))
 Admin_id = int(os.getenv('ADMIN_ID', 0))
 
 class Admin_States(StatesGroup):

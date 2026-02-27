@@ -1,9 +1,12 @@
+import json
+
 from aiogram.filters import Command, CommandStart
 from aiogram import Router, F
 from aiogram.types import Message, FSInputFile
 import Key_Board.Reply_KeyBoard as rkb
 from Photo_List import photo_list
 from random import choice
+import aiohttp
 
 router = Router()
 
@@ -87,3 +90,32 @@ async def gdzod(message: Message):
     olink = message.text
     await message.answer(f'https://reshak.ru/otvet/reshebniki.php?otvet={olink[4:]}&predmet=bogolubov11')
 
+async def get_joke(category: int):
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"http://rzhunemogu.ru/RandJSON.aspx?CType={category}", timeout=5) as response:
+                raw = await response.text(encoding="cp1251")
+                data = json.loads(raw, strict=False)
+
+        return data.get("content", "Не удалось придумать анекдот")
+    except Exception as e:
+        print("Joke error:", e)
+        return "Не удалось придумать анекдот"
+
+@router.message(Command("joke"))
+async def joke(message: Message):
+    await message.answer(await get_joke(1))
+
+@router.message(Command("joke18"))
+async def joke(message: Message):
+    if message.chat.id in idf:
+        await message.answer("нет")
+    else:
+        await message.answer(await get_joke(11))
+
+mat = open("resources/mat.txt", encoding="utf-8").readlines()
+
+@router.message(Command("mat"))
+async def ramdom_mat(message: Message):
+    if message.chat.id not in idf:
+        await message.answer(choice(mat))

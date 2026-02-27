@@ -1,9 +1,13 @@
-from aiogram.filters import Command, CommandStart
+import json
+import random
+
+from aiogram.filters import Command, CommandStart, CommandObject
 from aiogram import Router, F
 from aiogram.types import Message, FSInputFile
 import Key_Board.Reply_KeyBoard as rkb
 from Photo_List import photo_list
 from random import choice
+import aiohttp
 
 router = Router()
 
@@ -17,6 +21,19 @@ async def cmsta(message: Message):
         await message.answer("Hello\nSelect a Epstein's file category", reply_markup = rkb.reply_start)
     else:
         await message.answer('Hello. My name is Jeffrey Epstein')
+
+@router.message(Command("help"))
+async def get_help(message: Message):
+    await message.answer("""
+Привет я Джеффри Эпштейн. Вот что я могу:
+/port - мой портрет
+/photo - рандомное фото из моих файлов
+Гдзи{параграф} - гдз по истории. Пример: Гдзи1
+Гдза{параграф} - гдз по английскому языку. Пример: Гдза1
+Гдзо{параграф} - гдз по обществознанию. Пример: Гдзо1
+/joke и /joke18 и /mat - шутки
+/pege {предмет} - предсказание баллов на ЕГЭ по предмету с помощью квантовых вычислений, древних легенд, блокчейна и астрологии. Пример: /pege информатика
+    """)
 
 @router.message(Command('port'))
 async def port(message: Message):
@@ -87,3 +104,39 @@ async def gdzod(message: Message):
     olink = message.text
     await message.answer(f'https://reshak.ru/otvet/reshebniki.php?otvet={olink[4:]}&predmet=bogolubov11')
 
+async def get_joke(category: int):
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"http://rzhunemogu.ru/RandJSON.aspx?CType={category}", timeout=5) as response:
+                raw = await response.text(encoding="cp1251")
+                data = json.loads(raw, strict=False)
+
+        return data.get("content", "Не удалось придумать анекдот")
+    except Exception as e:
+        print("Joke error:", e)
+        return "Не удалось придумать анекдот"
+
+@router.message(Command("joke"))
+async def joke(message: Message):
+    await message.answer(await get_joke(1))
+
+@router.message(Command("joke18"))
+async def joke(message: Message):
+    if message.chat.id in idf:
+        await message.answer("нет")
+    else:
+        await message.answer(await get_joke(11))
+
+mat = open("resources/mat.txt", encoding="utf-8").readlines()
+
+@router.message(Command("mat"))
+async def ramdom_mat(message: Message):
+    if message.chat.id not in idf:
+        await message.answer(choice(mat))
+
+@router.message(Command("pege"))
+async def predict_ege(message: Message, command: CommandObject):
+    if command.args is None:
+        await message.answer("Ошибка: не передан аргумент")
+    else:
+        await message.answer(f"Ты получишь {random.randint(0, 100)} баллов на ЕГЭ по {command.args}")

@@ -1,5 +1,4 @@
 import json
-import os.path
 
 import aiohttp
 from random import choice, randint
@@ -8,6 +7,7 @@ import key_board.reply_keyboard as rkb
 from aiogram import Router, F, Bot
 from aiogram.types import Message, FSInputFile
 from aiogram.filters import Command, CommandStart, CommandObject
+from collections import deque
 
 import gif
 from photos import photo_list, photof_list, photo_path
@@ -15,6 +15,12 @@ from photos import photo_list, photof_list, photo_path
 router = Router()
 
 idf = [-1002730278858, 5922044080, -1003772916363]
+
+
+HISTORY_SIZE = 15
+
+recent_photos = deque(maxlen=HISTORY_SIZE)
+recent_photos_f = deque(maxlen=HISTORY_SIZE)
 
 
 @router.message(CommandStart())
@@ -50,11 +56,28 @@ async def port(message: Message):
 @router.message(Command('photo'))
 async def randomphoto(message: Message):
     if message.chat.id not in idf:
-        photo = FSInputFile(choice(photo_list))
-        await message.answer_photo(photo=photo)
+        photo_pool = photo_list
+        history = recent_photos
     else:
-        photof = FSInputFile(choice(photof_list))
-        await message.answer_photo(photo=photof)
+        photo_pool = photof_list
+        history = recent_photos_f
+
+    if len(photo_pool) <= HISTORY_SIZE:
+        history.clear()
+
+    available_photos = [p for p in photo_pool if p not in history]
+
+    if not available_photos:
+        history.clear()
+        available_photos = photo_pool
+
+    selected_photo = choice(available_photos)
+
+    history.append(selected_photo)
+
+    photo = FSInputFile(selected_photo)
+    await message.answer_photo(photo=photo)
+    
     print(f'{message.from_user.username}:{message.from_user.id} EPH')
 
 
@@ -71,7 +94,11 @@ async def add_photo_by_message(message: Message, bot: Bot):
     await message.answer("Фото добавлено")
 
 
-@router.message(Command("add_photo", F.reply_to_message, F.reply_to_message.photo))
+@router.message(
+    Command("add_photo"),
+    F.reply_to_message,
+    F.reply_to_message.photo
+)
 async def add_photo_by_reply(message: Message, bot: Bot):
     await add_photo(message.reply_to_message.photo[-1], bot)
     await message.answer("Фото добавлено")

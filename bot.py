@@ -10,8 +10,8 @@ from aiogram.client.session.aiohttp import AiohttpSession
 async def main():
     try:
         load_dotenv()
-        bot_tocken = os.getenv('BOT_TOCKEN')
-        bot = Bot(token = bot_tocken, session = AiohttpSession(proxy="http://proxy.server:3128"))
+        bot_token = os.getenv('BOT_TOKEN')
+        bot = Bot(token = bot_token, session = AiohttpSession(proxy="http://proxy.server:3128"))
         dp = Dispatcher()
         dp.include_router(router)
         dp.include_router(router_admin)
